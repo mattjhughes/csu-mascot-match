@@ -1,0 +1,482 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CSU Mascot Match</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #0f1624;
+      --muted: #607085;
+      --accent: #ff8a5c;
+      --accent-soft: #ffe9df;
+      --panel: #ffffff;
+      --border: #e7ecf2;
+      --success: #16a34a;
+      --bg: linear-gradient(180deg, #f8fbff 0%, #f4fbf7 50%, #fef7f3 100%);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Space Grotesk', system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      display: flex;
+      justify-content: center;
+      padding: 32px 16px 48px;
+    }
+    .shell {
+      width: min(1100px, 100%);
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 26px 26px 32px;
+      display: grid;
+      gap: 24px;
+      box-shadow: 0 16px 40px rgba(15, 22, 36, 0.08);
+    }
+    header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      text-align: center;
+    }
+    header img { height: 64px; }
+    h1 {
+      margin: 0;
+      font-size: clamp(32px, 4vw, 42px);
+      letter-spacing: -0.02em;
+    }
+    .subline {
+      color: var(--muted);
+      font-size: 14px;
+      margin: 0;
+    }
+    .hero-actions {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+    .primary-btn {
+      border: none;
+      border-radius: 999px;
+      padding: 18px 32px;
+      font-weight: 800;
+      font-size: 18px;
+      min-width: 240px;
+      letter-spacing: -0.01em;
+      background: var(--accent);
+      color: #fff;
+      cursor: pointer;
+      box-shadow: 0 14px 28px rgba(255,138,92,0.25);
+    }
+    .link-btn {
+      border: 1px solid var(--border);
+      background: var(--accent-soft);
+      color: var(--ink);
+      padding: 8px 14px;
+      border-radius: 999px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 6px 16px rgba(255,138,92,0.18);
+      font-size: 13px;
+    }
+
+    .game {
+      display: grid;
+      gap: 16px;
+      justify-items: center;
+      text-align: center;
+    }
+    #question {
+      font-size: 21px;
+      font-weight: 700;
+      margin: 6px 0;
+      letter-spacing: -0.01em;
+      min-height: 48px;
+    }
+    .meta {
+      color: var(--muted);
+      font-size: 14px;
+      min-height: 18px;
+    }
+
+    .choices {
+      width: 100%;
+      max-width: 1000px;
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      justify-content: center;
+      align-items: stretch;
+    }
+    @media (min-width: 960px) {
+      .choices { grid-template-columns: repeat(4, 1fr); }
+    }
+    .card {
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 12px 12px 14px;
+      background: #fff;
+      cursor: pointer;
+      transition: transform 140ms ease, border-color 140ms ease, box-shadow 140ms ease;
+      box-shadow: 0 8px 18px rgba(0,0,0,0.04);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      width: 230px;
+    }
+    .card:hover { transform: translateY(-2px); border-color: #ffd6c6; box-shadow: 0 12px 22px rgba(255,138,92,0.14); }
+    .card .img-wrap {
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      background: #f5fafb;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      padding: 8px;
+    }
+    .card img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      display: block;
+    }
+    .card .label {
+      display: block;
+      font-weight: 700;
+      font-size: 15px;
+      letter-spacing: -0.01em;
+      text-align: center;
+    }
+    .card.correct { border-color: var(--success); box-shadow: 0 0 0 2px rgba(28,156,75,0.15); }
+    .card.wrong { border-color: #e54848; box-shadow: 0 0 0 2px rgba(229,72,72,0.12); }
+
+    .actions {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 10px;
+      align-items: center;
+      justify-items: center;
+    }
+    button {
+      border: none;
+      border-radius: 999px;
+      padding: 12px 18px;
+      font-weight: 700;
+      cursor: pointer;
+      background: var(--accent);
+      color: #fff;
+      letter-spacing: -0.01em;
+      box-shadow: 0 8px 20px rgba(255,138,92,0.28);
+    }
+    button.secondary { background: #2b8a8f; box-shadow: 0 8px 20px rgba(43,138,143,0.22); }
+    button:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    #feedback {
+      min-height: 44px;
+      font-weight: 700;
+      color: var(--ink);
+      margin-top: 6px;
+      transition: opacity 120ms ease;
+    }
+    .good {
+      color: #065f46;
+      background: #d1fae5;
+      border-radius: 12px;
+      padding: 10px 14px;
+      display: inline-block;
+      border: 1px solid #10b981;
+    }
+    .bad {
+      color: #991b1b;
+      background: #fee2e2;
+      border-radius: 12px;
+      padding: 10px 14px;
+      display: inline-block;
+      border: 1px solid #ef4444;
+    }
+
+    .summary {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+      color: var(--muted);
+      font-size: 14px;
+      background: #f8fbff;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+    }
+    .summary strong { color: var(--ink); }
+
+    .share {
+      display: grid;
+      gap: 10px;
+      justify-items: center;
+      margin-top: 8px;
+    }
+    .share-card {
+      width: min(520px, 92%);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 12px;
+      background: #fff;
+      box-shadow: 0 10px 26px rgba(0,0,0,0.05);
+      display: grid;
+      gap: 8px;
+      justify-items: center;
+    }
+    .share-label {
+      font-weight: 700;
+      color: var(--muted);
+      letter-spacing: -0.01em;
+      text-align: center;
+    }
+    textarea {
+      width: 100%;
+      min-height: 84px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px;
+      font-family: 'Space Grotesk', system-ui, sans-serif;
+      font-size: 14px;
+      resize: vertical;
+      background: #f9fbfd;
+      color: var(--ink);
+    }
+
+    .hide { display: none !important; }
+    .faded { opacity: 0; visibility: hidden; }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header>
+      <img src="images/csulogo.png" alt="CalState logo">
+      <h1>CSU Mascot Match</h1>
+      <p class="subline">&nbsp;</p>
+      <div class="hero-actions">
+        <button class="primary-btn" id="start-btn">Start</button>
+      </div>
+    </header>
+
+    <section class="game">
+      <div class="meta faded" id="progress"></div>
+      <div id="question" class="faded"></div>
+      <div class="choices" id="choices"></div>
+      <div id="feedback"></div>
+
+      <div class="actions">
+          <!-- name removed; share shows at end -->
+      </div>
+
+      <div class="summary faded" id="summary">
+        <span><strong>Score:</strong> 0</span>
+        <span><strong>Correct:</strong> 0/10</span>
+        <span><strong>Avg time:</strong> 0.00s</span>
+      </div>
+    </section>
+    <section class="share hide" id="share-wrap">
+      <div class="share-card">
+        <div class="share-label">Share your score</div>
+        <textarea id="share-text" readonly>Play a round first!</textarea>
+        <button class="primary-btn" id="copy-btn" style="width: fit-content; justify-self: center; padding: 12px 18px; font-size: 14px;">Copy message</button>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const mascots = [
+      { campus: 'Cal State Bakersfield', mascot: 'Rowdy the Roadrunner', image: 'images/m/cal-state-bakersfield.png' },
+      { campus: 'CSU Channel Islands', mascot: 'Ecco the Dolphin', image: 'images/m/csu-channel-islands.png' },
+      { campus: 'Chico State', mascot: 'Willie the Wildcat', image: 'images/m/chico-state.png' },
+      { campus: 'Cal State Dominguez Hills', mascot: 'Toro', image: 'images/m/dominguez-hills.png' },
+      { campus: 'Cal State East Bay', mascot: 'Pioneer Pete', image: 'images/m/cal-state-east-bay.png' },
+      { campus: 'Fresno State', mascot: 'Victor E. Bulldog', image: 'images/m/fresno-state.png' },
+      { campus: 'Cal State Fullerton', mascot: 'Tuffy the Titan', image: 'images/m/cal-state-fullerton.png' },
+      { campus: 'Cal Poly Humboldt', mascot: 'Lucky the Lumberjack', image: 'images/m/cal-poly-humboldt.png' },
+      { campus: 'Long Beach State', mascot: 'Sharks', image: 'images/m/long-beach-state.png' },
+      { campus: 'Cal State LA', mascot: 'Golden Eagles', image: 'images/m/cal-state-la.png' },
+      { campus: 'Cal Maritime', mascot: 'Keelhaulers', image: 'images/m/cal-maritime.png' },
+      { campus: 'Cal State Monterey Bay', mascot: 'Monte Rey the Sea Otter', image: 'images/m/cal-state-monterey-bay.png' },
+      { campus: 'Cal State Northridge', mascot: 'Matty the Matador', image: 'images/m/cal-state-northridge.png' },
+      { campus: 'Cal Poly Pomona', mascot: 'Billy Bronco', image: 'images/m/cal-poly-pomona.png' },
+      { campus: 'Sacramento State', mascot: 'Herky the Hornet', image: 'images/m/sac-state.png' },
+      { campus: 'CSU San Bernardino', mascot: 'Cody the Coyote', image: 'images/m/csu-san-bernardino.png' },
+      { campus: 'San Diego State', mascot: 'Aztecs', image: 'images/m/san-diego-state.png' },
+      { campus: 'San Francisco State', mascot: 'Gator', image: 'images/m/san-francisco-state.png' },
+      { campus: 'San José State', mascot: 'Sammy the Spartan', image: 'images/m/san-jose-state.png' },
+      { campus: 'CSU San Marcos', mascot: 'Crash the Cougar', image: 'images/m/csu-san-marcos.png' },
+      { campus: 'Cal Poly San Luis Obispo', mascot: 'Musty the Mustang', image: 'images/m/cal-poly-slo.png' },
+      { campus: 'Sonoma State', mascot: 'Lobo the Seawolf', image: 'images/m/sonoma-state.png' }
+    ];
+
+    const questionEl = document.getElementById('question');
+    const choicesEl = document.getElementById('choices');
+    const feedbackEl = document.getElementById('feedback');
+    const startBtn = document.getElementById('start-btn');
+    const progressEl = document.getElementById('progress');
+    const summaryEl = document.getElementById('summary');
+    const shareWrap = document.getElementById('share-wrap');
+    const shareText = document.getElementById('share-text');
+    const copyBtn = document.getElementById('copy-btn');
+
+    const MAX_Q = 10;
+    let asked = 0;
+    let correct = 0;
+    let totalTime = 0;
+    let currentQuestion = null;
+    let questionStart = null;
+    let roundActive = false;
+    let finished = false;
+    let advanceTimer = null;
+
+    const formatTime = (t) => `${t.toFixed(2)}s`;
+
+    function shuffle(arr) {
+      return arr.map(v => ({ v, r: Math.random() }))
+        .sort((a, b) => a.r - b.r)
+        .map(({ v }) => v);
+    }
+
+    function pickQuestion() {
+      if (advanceTimer) {
+        clearTimeout(advanceTimer);
+        advanceTimer = null;
+      }
+      questionEl.classList.remove('faded');
+      progressEl.classList.remove('faded');
+      summaryEl.classList.remove('faded');
+      const campus = mascots[Math.floor(Math.random() * mascots.length)];
+      const distractors = shuffle(mascots.filter(m => m.campus !== campus.campus)).slice(0, 2);
+      const options = shuffle([campus, ...distractors]);
+
+      currentQuestion = { campus, options };
+      questionEl.textContent = `Which mascot belongs to ${campus.campus}?`;
+      feedbackEl.textContent = '';
+      feedbackEl.className = 'faded';
+      renderChoices(options, campus);
+      questionStart = performance.now();
+      progressEl.textContent = `Question ${asked + 1} / ${MAX_Q}`;
+    }
+
+    function renderChoices(options, correctCampus) {
+      choicesEl.innerHTML = '';
+      options.forEach(opt => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+          <div class="img-wrap"><img src="${opt.image}" alt="${opt.mascot}"></div>
+          <span class="label">${opt.mascot}</span>
+        `;
+        card.onclick = () => handleChoice(card, opt, correctCampus);
+        choicesEl.appendChild(card);
+      });
+    }
+
+    function handleChoice(card, chosen, correctCampus) {
+      if (!roundActive || !currentQuestion || finished) return;
+      const elapsed = (performance.now() - questionStart) / 1000;
+
+      const isCorrect = chosen.campus === correctCampus.campus;
+      card.classList.add(isCorrect ? 'correct' : 'wrong');
+      document.querySelectorAll('.card').forEach(c => c.onclick = null);
+
+      asked += 1;
+      totalTime += elapsed;
+      if (isCorrect) correct += 1;
+
+      const avgTime = asked ? totalTime / asked : 0;
+      const score = Math.max(0, Math.round(correct * 120 + Math.max(0, (4 - avgTime) * 40)));
+
+      feedbackEl.textContent = isCorrect
+        ? `Correct — ${correctCampus.mascot} is ${correctCampus.campus}.`
+        : `Answer: ${correctCampus.mascot} for ${correctCampus.campus}.`;
+      feedbackEl.className = isCorrect ? 'good' : 'bad';
+
+      updateSummary(score, avgTime);
+
+      if (asked >= MAX_Q) {
+        finished = true;
+        roundActive = false;
+        questionEl.textContent = 'Round complete!';
+        progressEl.textContent = `10/10 done`;
+        shareWrap.classList.remove('hide');
+        updateShareText();
+      }
+      // auto-advance if not finished
+      if (asked < MAX_Q) {
+        advanceTimer = setTimeout(() => {
+          nextQuestion();
+        }, 2000);
+      }
+    }
+
+    function resetRound() {
+      asked = 0;
+      correct = 0;
+      totalTime = 0;
+      roundActive = true;
+      finished = false;
+      feedbackEl.textContent = '';
+      feedbackEl.className = 'faded';
+      updateSummary(0, 0);
+      progressEl.textContent = 'Question 0 / 10';
+      shareWrap.classList.add('hide');
+      shareText.value = 'Play a round first!';
+      questionEl.textContent = '';
+      choicesEl.innerHTML = '';
+      feedbackEl.textContent = '';
+      summaryEl.classList.add('faded');
+      progressEl.classList.add('faded');
+      questionEl.classList.add('faded');
+    }
+
+    function startRound() {
+      resetRound();
+      pickQuestion();
+    }
+
+    function nextQuestion() {
+      if (finished) return;
+      document.querySelectorAll('.card').forEach(c => c.classList.remove('correct', 'wrong'));
+      pickQuestion();
+    }
+
+    function updateSummary(score, avgTime) {
+      summaryEl.innerHTML = `
+        <span><strong>Score:</strong> ${score}</span>
+        <span><strong>Correct:</strong> ${correct}/${MAX_Q}</span>
+        <span><strong>Avg time:</strong> ${formatTime(avgTime)}</span>
+      `;
+      progressEl.textContent = `Question ${asked} / ${MAX_Q}`;
+    }
+
+    function updateShareText() {
+      const avgTime = asked ? totalTime / asked : 0;
+      const score = Math.max(0, Math.round(correct * 120 + Math.max(0, (4 - avgTime) * 40)));
+      const link = window.location.href;
+      shareText.value = `🎉⭐️ I scored ${score} pts! ⭐️🎉
+Avg time: ${formatTime(avgTime)} per question.
+Try to beat my score: ${link}`;
+    }
+
+    startBtn.onclick = startRound;
+    copyBtn.onclick = () => {
+      shareText.select();
+      shareText.setSelectionRange(0, shareText.value.length);
+      navigator.clipboard?.writeText(shareText.value).catch(() => {});
+    };
+  </script>
+</body>
+</html>
