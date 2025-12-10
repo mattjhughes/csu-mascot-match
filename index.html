@@ -340,6 +340,7 @@
     let roundActive = false;
     let finished = false;
     let advanceTimer = null;
+    let roundPool = [];
 
     const formatTime = (t) => `${t.toFixed(2)}s`;
 
@@ -357,7 +358,10 @@
       questionEl.classList.remove('faded');
       progressEl.classList.remove('faded');
       summaryEl.classList.remove('faded');
-      const campus = mascots[Math.floor(Math.random() * mascots.length)];
+      if (!roundPool.length) {
+        roundPool = shuffle([...mascots]);
+      }
+      const campus = roundPool.pop(); // unique per round
       const distractors = shuffle(mascots.filter(m => m.campus !== campus.campus)).slice(0, 2);
       const options = shuffle([campus, ...distractors]);
 
@@ -428,6 +432,7 @@
       totalTime = 0;
       roundActive = true;
       finished = false;
+      roundPool = shuffle([...mascots]);
       feedbackEl.textContent = '';
       feedbackEl.className = 'faded';
       updateSummary(0, 0);
